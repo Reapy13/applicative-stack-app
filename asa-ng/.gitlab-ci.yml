@@ -6,16 +6,15 @@ stages:
 default:
   image: node:18-alpine
 
-cache:
-  paths:
-    - asa-ng/node_modules
-
 install_packages:
   stage: prepare
   before_script:
     - cd asa-ng
   script:
     - npm ci
+  artifacts:
+        paths:
+          - asa-ng/node_modules/*
 
 build:
   stage: build
