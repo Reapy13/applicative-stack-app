@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+listNgRepo=$(ls -l | grep ^d.*ng.* | cut -d' ' -f13)
+
+for ngRepo in $listNgRepo
+do
+	cd $ngRepo
+	npm run lint
+	cd ..
+done
