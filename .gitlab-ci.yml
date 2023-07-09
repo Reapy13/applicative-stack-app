@@ -8,4 +8,4 @@ asa-ng:
     strategy: depend
   only:
     changes:
-      asa-ng/**/*
+      - asa-ng/**/*
