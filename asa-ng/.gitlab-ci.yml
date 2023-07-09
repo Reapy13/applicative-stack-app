@@ -7,36 +7,37 @@ stages:
 default:
   image: node:18-alpine
 
+before_script:
+  - cd asa-ng
+
 install_packages:
   stage: prepare
-  before_script:
-    - cd asa-ng
   script:
     - npm ci
   artifacts:
-        paths:
-          - asa-ng/node_modules/*
+    paths:
+      - node_modules/*
 
 build:
   stage: build
   needs: [install_packages]
-  before_script:
-    - cd asa-ng
   script:
     - npm run build
+  artifacts:
+    paths:
+      - dist/*
 
 test:
   stage: test
   needs: [install_packages]
-  before_script:
-    - cd asa-ng
   script:
     - npm run test
 
 build_image:
   stage: release
+  needs: [build, test]
   image: docker:24.0.3
-  before_script:
-    - cd asa-ng
+  services:
+    - docker:24.0.3-dind
   script:
     - docker build . -t asa-ng:0.0.1-SNAPSHOT
