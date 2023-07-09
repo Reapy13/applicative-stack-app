@@ -6,21 +6,27 @@ stages:
 default:
   image: node:18-alpine
 
+setup:
+  before_script:
+    - cd asa-ng
+
 install_packages:
   stage: prepare
+  extends: setup
   script:
-    - cd asa-ng
     - npm ci
 
 
 build:
   stage: build
+  extends: setup
   needs: [install_packages]
   script:
     - npm run build
 
 test:
   stage: test
+  extends: setup
   needs: [install_packages] 
   script:
     - npm run test
