@@ -1,0 +1,11 @@
+stages:
+  - trigger-child-pipelines
+
+asa-ng:
+  stage: trigger-child-pipelines
+  trigger:
+    include: asa-ng/.gitlab-ci.yml
+    strategy: depend
+  only:
+    changes:
+      asa-ng/**/*

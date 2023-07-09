@@ -9,6 +9,7 @@ default:
 install_packages:
   stage: prepare
   script:
+    - cd asa-ng
     - npm ci
 
 
