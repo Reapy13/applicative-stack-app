@@ -1,0 +1,25 @@
+stages:
+  - prepare
+  - build
+  - test
+
+default:
+  image: node:18-alpine
+
+install_packages:
+  stage: prepare
+  script:
+    - npm ci
+
+
+build:
+  stage: build
+  needs: [install_packages]
+  script:
+    - npm run build
+
+test:
+  stage: test
+  needs: [install_packages] 
+  script:
+    - npm run test
