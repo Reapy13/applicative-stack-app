@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "lint": "ng lint",
-    "test": "ng test"
+    "test": "ng test",
+    "prepare": "husky install"
   },
   "private": true,
   "dependencies": {
