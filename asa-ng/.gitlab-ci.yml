@@ -2,6 +2,7 @@ stages:
   - prepare
   - build
   - test
+  - release
 
 default:
   image: node:18-alpine
@@ -31,3 +32,12 @@ test:
     - cd asa-ng
   script:
     - npm run test
+
+build_image:
+  stage: release
+  services:
+    - docker:24.0.3-dind
+  before_script:
+    - cd asa-ng
+  script:
+    - docker build . -t asa-ng:0.0.1-SNAPSHOT
