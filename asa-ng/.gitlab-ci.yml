@@ -35,8 +35,7 @@ test:
 
 build_image:
   stage: release
-  services:
-    - docker:24.0.3-dind
+  image: docker:24.0.3
   before_script:
     - cd asa-ng
   script:
