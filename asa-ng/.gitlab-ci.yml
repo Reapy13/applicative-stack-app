@@ -1,4 +1,5 @@
-include: 'https://innersource.soprasteria.com/dep/library/ci-library/-/blob/master/stages/build-jobs/build-image.yml'
+include:
+  remote: 'https://innersource.soprasteria.com/dep/library/ci-library/-/blob/master/stages/build-jobs/build-image.yml'
 
 stages:
   - prepare
