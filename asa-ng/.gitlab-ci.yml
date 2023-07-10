@@ -11,14 +11,12 @@ stages:
   - test
   - build_image
 
-default:
-  image: node:18-alpine
-
 before_script:
   - cd asa-ng
 
 install_packages:
   stage: prepare
+  image: node:18-alpine
   script:
     - npm ci
   artifacts:
@@ -28,6 +26,7 @@ install_packages:
 build:
   stage: build
   needs: [install_packages]
+  image: node:18-alpine
   script:
     - npm run build
   artifacts:
@@ -37,5 +36,6 @@ build:
 test:
   stage: test
   needs: [install_packages]
+  image: node:18-alpine
   script:
     - npm run test
