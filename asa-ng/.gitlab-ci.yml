@@ -1,5 +1,6 @@
 include:
-  remote: 'https://innersource.soprasteria.com/dep/library/ci-library/-/blob/master/stages/build-jobs/build-image.yml'
+  project: "dep/library/ci-library"
+  file: "stages/build-jobs/build-images.yml"
 
 stages:
   - prepare
