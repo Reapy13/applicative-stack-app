@@ -1,6 +1,6 @@
 include:
   project: "dep/library/ci-library"
-  file: "stages/build-jobs/build-images.yml"
+  file: "stages/build-jobs/build-image.yml"
 
 stages:
   - prepare
