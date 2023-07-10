@@ -4,6 +4,7 @@ include:
     file:
       - "stages/build-jobs/build-image.yml"
       - "main.deployment.yml"
+      - "main.rules.yml"
 
 stages:
   - prepare
