@@ -9,7 +9,7 @@ stages:
   - prepare
   - build
   - test
-  - build_image
+  - build-image
 
 before_script:
   - cd asa-ng
