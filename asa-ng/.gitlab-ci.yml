@@ -3,8 +3,6 @@ include:
     ref: production
     file:
       - "stages/build-jobs/build-image.yml"
-      - "stages/init-jobs/branch-lint.yml"
-      - "main.deployment.yml"
 
 stages:
   - prepare
@@ -12,12 +10,13 @@ stages:
   - test
   - build-image
 
-before_script:
-  - cd asa-ng
+default:
+  image: node:18-alpine
+  before_script:
+    - cd asa-ng
 
 install_packages:
   stage: prepare
-  image: node:18-alpine
   script:
     - npm ci
   artifacts:
@@ -27,7 +26,6 @@ install_packages:
 build:
   stage: build
   needs: [install_packages]
-  image: node:18-alpine
   script:
     - npm run build
   artifacts:
@@ -37,6 +35,5 @@ build:
 test:
   stage: test
   needs: [install_packages]
-  image: node:18-alpine
   script:
     - npm run test
