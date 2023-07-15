@@ -3,6 +3,7 @@ include:
     ref: production
     file:
       - "stages/build-jobs/build-image.yml"
+      - "main.deployment.yml"
 
 stages:
   - prepare
