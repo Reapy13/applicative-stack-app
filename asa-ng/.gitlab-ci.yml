@@ -16,6 +16,7 @@ stages:
   - build-application
   - lint
   - analysis
+  - security-check
   - test
   - build-image
 
