@@ -10,6 +10,7 @@ before_script:
     - cd asa-ng
 
 stages:
+  - init
   - prepare
   - build
   - test
