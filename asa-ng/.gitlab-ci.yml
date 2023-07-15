@@ -23,6 +23,7 @@ stages:
   - destroy
   - pre-acceptance
   - acceptance
+  - release
 
 install_packages:
   stage: prepare
