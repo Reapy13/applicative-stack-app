@@ -5,16 +5,16 @@ include:
       - "stages/build-jobs/build-image.yml"
       - "main.deployment.yml"
 
+default:
+  image: node:18-alpine
+  before_script:
+    - cd asa-ng
+
 stages:
   - prepare
   - build
   - test
   - build-image
-
-default:
-  image: node:18-alpine
-  before_script:
-    - cd asa-ng
 
 install_packages:
   stage: prepare
