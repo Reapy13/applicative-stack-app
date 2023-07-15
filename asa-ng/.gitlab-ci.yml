@@ -21,6 +21,8 @@ stages:
   - build-image
   - deploy
   - destroy
+  - pre-acceptance
+  - acceptance
 
 install_packages:
   stage: prepare
