@@ -19,6 +19,7 @@ stages:
   - security-check
   - test
   - build-image
+  - deploy
 
 install_packages:
   stage: prepare
