@@ -13,6 +13,7 @@ stages:
   - init
   - prepare
   - build
+  - build-application
   - lint
   - test
   - build-image
