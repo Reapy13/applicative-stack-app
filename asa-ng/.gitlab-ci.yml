@@ -20,6 +20,7 @@ stages:
   - test
   - build-image
   - deploy
+  - destroy
 
 install_packages:
   stage: prepare
