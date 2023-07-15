@@ -24,6 +24,7 @@ stages:
   - pre-acceptance
   - acceptance
   - release
+  - performance
 
 install_packages:
   stage: prepare
