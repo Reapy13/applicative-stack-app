@@ -1,30 +1,11 @@
-include:
-  - project: "dep/library/ci-library"
-    ref: production
-    file:
-      - "stages/build-jobs/build-image.yml"
-      - "main.deployment.yml"
-
 image: node:18-alpine
 before_script:
     - cd asa-ng
 
 stages:
-  - init
   - prepare
   - build
-  - build-application
-  - lint
-  - analysis
-  - security-check
   - test
-  - build-image
-  - deploy
-  - destroy
-  - pre-acceptance
-  - acceptance
-  - release
-  - performance
 
 install_packages:
   stage: prepare
