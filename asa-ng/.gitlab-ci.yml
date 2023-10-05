@@ -41,10 +41,6 @@ sonarqube-check:
   script: 
     - sonar-scanner
   allow_failure: true
-  only:
-    - merge_requests
-    - master
-    - develop
 
 test:
   stage: test
