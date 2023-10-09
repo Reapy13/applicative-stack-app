@@ -11,8 +11,6 @@ stages:
 
 install_packages:
   stage: prepare
-  before_script:
-    - env
   script:
     - npm ci
   artifacts:
