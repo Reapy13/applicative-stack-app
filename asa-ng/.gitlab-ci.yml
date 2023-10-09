@@ -54,7 +54,10 @@ build-and-publish-docker-image:
   needs: [install_packages, build, test]
   image:
     name: docker:24.0.6
+  services:
+    - docker:24.0.6
   variables:
+    DOCKER_HOST: tcp://docker:2375
     IMAGE_NAME: "${NEXUS_DOCKER_REPOSITORY_URL}/asa-ng"
   before_script:
     - docker login ${NEXUS_DOCKER_REPOSITORY_URL}:${NEXUS_HTTPS_PORT} -u ${DOCKER_CICD_USER} -p ${DOCKER_CICD_PASSWORD}
