@@ -7,6 +7,7 @@ stages:
   - build
   - analyse
   - test
+  - release
 
 install_packages:
   stage: prepare
@@ -47,3 +48,15 @@ test:
   needs: [install_packages]
   script:
     - npm run test
+
+build-and-publish-docker-image:
+  stage: release
+  needs: [install_packages, build, test]
+  image:
+    name: docker:24.0.6
+  before_script:
+    - docker login ${NEXUS_DOCKER_REPOSITORY_URL}:${NEXUS_HTTPS_PORT}
+  script:
+    - def imageName = ${NEXUS_DOCKER_REPOSITORY_URL}/asa-ng
+    - docker build . -t=${imageName}
+    - docker push ${imageName}

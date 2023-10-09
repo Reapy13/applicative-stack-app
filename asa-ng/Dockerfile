@@ -1,8 +1,7 @@
-FROM nginx:2.15.1-alpine
+FROM nginx:1.25-alpine
 
-ARG WORKDIR = app/
+RUN rm -rf /usr/share/nginx/html/*
 
-RUN groupadd -r owners && useradd -g owners hfauchery
-USER hfauchery
+COPY ./dist/asa-ng /usr/share/nginx/html
 
-COPY /dist/asa-ng /usr/share/nginx/html
+CMD ["nginx", "-g", "daemon off;"]
