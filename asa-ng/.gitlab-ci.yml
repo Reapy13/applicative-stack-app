@@ -54,9 +54,10 @@ build-and-publish-docker-image:
   needs: [install_packages, build, test]
   image:
     name: docker:24.0.6
+  variables:
+    IMAGE_NAME: "${NEXUS_DOCKER_REPOSITORY_URL}/asa-ng"
   before_script:
     - docker login ${NEXUS_DOCKER_REPOSITORY_URL}:${NEXUS_HTTPS_PORT} -u ${DOCKER_CICD_USER} -p ${DOCKER_CICD_PASSWORD}
   script:
-    - def imageName = ${NEXUS_DOCKER_REPOSITORY_URL}/asa-ng
-    - docker build . -t=${imageName}
-    - docker push ${imageName}
+    - docker build . -t=${IMAGE_NAME}
+    - docker push ${IMAGE_NAME}
