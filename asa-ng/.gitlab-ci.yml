@@ -62,6 +62,7 @@ build-and-publish-docker-image:
   before_script:
     - apk add --no-cache su-exec
     - set -ex && apk --no-cache add sudo
+    - sudo chmod 666 /var/run/docker.sock
     - sudo dockerd
     - docker ps
     - docker login ${NEXUS_DOCKER_REPOSITORY_URL}:${NEXUS_HTTPS_PORT} -u ${DOCKER_CICD_USER} -p ${DOCKER_CICD_PASSWORD}
