@@ -60,6 +60,7 @@ build-and-publish-docker-image:
     DOCKER_HOST: tcp://docker:2375
     IMAGE_NAME: "${NEXUS_DOCKER_REPOSITORY_URL}/asa-ng"
   before_script:
+    - apk add --no-cache su-exec
     - sudo dockerd
     - docker ps
     - docker login ${NEXUS_DOCKER_REPOSITORY_URL}:${NEXUS_HTTPS_PORT} -u ${DOCKER_CICD_USER} -p ${DOCKER_CICD_PASSWORD}
