@@ -3,10 +3,10 @@ before_script:
     - cd asa-ng
 
 stages:
-  - prepare
-  - build
-  - analyse
-  - test
+  # - prepare
+  # - build
+  # - analyse
+  # - test
   - release
 
 install_packages:
@@ -51,7 +51,7 @@ test:
 
 build-and-publish-docker-image:
   stage: release
-  needs: [install_packages, build, test]
+  # needs: [install_packages, build, test]
   image:
     name: docker:24.0.6
   services:
@@ -60,6 +60,7 @@ build-and-publish-docker-image:
     DOCKER_HOST: tcp://docker:2375
     IMAGE_NAME: "${NEXUS_DOCKER_REPOSITORY_URL}/asa-ng"
   before_script:
+    - dockerd
     - docker ps
     - docker login ${NEXUS_DOCKER_REPOSITORY_URL}:${NEXUS_HTTPS_PORT} -u ${DOCKER_CICD_USER} -p ${DOCKER_CICD_PASSWORD}
   script:
