@@ -63,5 +63,5 @@ build-and-publish-docker-image:
   script:
     - /kaniko/executor
       --context .
-      --dockerfile ./Dockerfile"
-      --destination "${IMAGE_NAME}:latest
+      --dockerfile ./Dockerfile
+      --destination "${IMAGE_NAME}:latest"
