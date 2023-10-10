@@ -7,7 +7,6 @@ before_script:
 
 variables:
   ASA_PROJECT_DIR: "${CI_PROJECT_DIR}/asa-ng"
-  VERSION: latest
 
 stages:
   - prepare
@@ -16,7 +15,7 @@ stages:
   - test
   - release
 
-get_version:
+get-version:
   stage: prepare
   script:
     - |
@@ -25,22 +24,22 @@ get_version:
       else
         VERSION="$(node -p require\(\'${ASA_PROJECT_DIR}/package.json\'\).version)-${CI_COMMIT_SHORT_SHA}"
       fi
+    - echo "VERSION=${VERSION}" >> prepare.env
   artifacts:
-    paths:
-      - ${VERSION}
+    reports:
+      dotenv: prepare.env
 
-install_packages:
+install-packages:
   stage: prepare
   script:
     - npm ci
   artifacts:
     paths:
       - asa-ng/node_modules/*
-      - ${VERSION}
 
 build:
   stage: build
-  needs: [install_packages]
+  needs: [install-packages]
   script:
     - npm run build
   artifacts:
@@ -49,7 +48,7 @@ build:
   
 sonarqube-check:
   stage: analyse
-  needs: [install_packages]
+  needs: [install-packages]
   image: 
     name: sonarsource/sonar-scanner-cli:latest
     entrypoint: [""]
@@ -66,13 +65,13 @@ sonarqube-check:
 
 test:
   stage: test
-  needs: [install_packages]
+  needs: [install-packages]
   script:
     - npm run test
 
 build-and-publish-docker-image:
   stage: release
-  needs: [install_packages, build, test]
+  needs: [get-version, install-packages, build, test]
   image:
     name: gcr.io/kaniko-project/executor:v1.9.0-debug
     entrypoint: ['']
