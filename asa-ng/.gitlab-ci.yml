@@ -64,10 +64,13 @@ build-and-publish-docker-image:
   variables:
     CONTEXT_DIR: "${ASA_PROJECT_DIR}"
     IMAGE_NAME: "${NEXUS_DOCKER_REPOSITORY_URL}/asa-ng"
-    IMAGE_VERSION: $(eval '(if [ "${CI_COMMIT_TAG}" ]; then echo "${CI_COMMIT_TAG}"; else echo \"$(node -p \"require(\"${ASA_PROJECT_DIR}/package.json\").version\")-${CI_COMMIT_SHORT_SHA}"; fi);')
+    IMAGE_VERSION: "$(node -p \"require(\"${ASA_PROJECT_DIR}/package.json\").version\")-${CI_COMMIT_SHORT_SHA}"
   before_script:
     # Adds authentication to docker repository into kaniko config
     - echo "{\"auths\":{\"${NEXUS_DOCKER_REPOSITORY_URL}:${NEXUS_HTTPS_PORT}\":{\"username\":\"${DOCKER_CICD_USER}\",\"password\":\"${DOCKER_CICD_PASSWORD}\"}}}" > /kaniko/.docker/config.json
   script:
+    - if [ "${CI_COMMIT_TAG}" ]; then
+        IMAGE_VERSION="${CI_COMMIT_TAG}"
+      fi
     - !reference [.kaniko-build-and-publish, script]
   
