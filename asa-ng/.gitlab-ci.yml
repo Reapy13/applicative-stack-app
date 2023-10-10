@@ -53,7 +53,7 @@ build-and-publish-docker-image:
   stage: release
   needs: [install_packages, build, test]
   image:
-    name: grc.io/kaniko-project/executor:v1.16.0-debug
+    name: grc.io/kaniko-project/executor:v1.14.0-debug
     entrypoint: ['']
   variables:
     IMAGE_NAME: "${NEXUS_DOCKER_REPOSITORY_URL}/asa-ng"
