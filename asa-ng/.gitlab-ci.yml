@@ -17,6 +17,8 @@ stages:
 
 get-version:
   stage: prepare
+  variables:
+    VERSION: latest
   script:
     - |
       if [ ${CI_COMMIT_TAG} ]; then
