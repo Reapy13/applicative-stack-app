@@ -11,16 +11,15 @@ variables:
 
 stages:
   - prepare
-  # - build
-  # - analyse
-  # - test
+  - build
+  - analyse
+  - test
   - release
 
 install_packages:
   stage: prepare
   before_script:
     - VERSION="$(node -p require\(\'${ASA_PROJECT_DIR}/package.json\'\).version)-${CI_COMMIT_SHORT_SHA}"
-    - echo ${VERSION}
   script:
     - npm ci
 
@@ -28,42 +27,41 @@ install_packages:
     paths:
       - asa-ng/node_modules/*
 
-# build:
-#   stage: build
-#   needs: [install_packages]
-#   script:
-#     - npm run build
-#   artifacts:
-#     paths:
-#       - asa-ng/dist/*
+build:
+  stage: build
+  needs: [install_packages]
+  script:
+    - npm run build
+  artifacts:
+    paths:
+      - asa-ng/dist/*
   
-# sonarqube-check:
-#   stage: analyse
-#   needs: [install_packages]
-#   image: 
-#     name: sonarsource/sonar-scanner-cli:latest
-#     entrypoint: [""]
-#   variables:
-#     SONAR_USER_HOME: "${ASA_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
-#     GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
-#   cache:
-#     key: "${CI_JOB_NAME}"
-#     paths:
-#       - .sonar/cache
-#   script: 
-#     - sonar-scanner
-#   allow_failure: true
+sonarqube-check:
+  stage: analyse
+  needs: [install_packages]
+  image: 
+    name: sonarsource/sonar-scanner-cli:latest
+    entrypoint: [""]
+  variables:
+    SONAR_USER_HOME: "${ASA_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
+    GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
+  cache:
+    key: "${CI_JOB_NAME}"
+    paths:
+      - .sonar/cache
+  script: 
+    - sonar-scanner
+  allow_failure: true
 
-# test:
-#   stage: test
-#   needs: [install_packages]
-#   script:
-#     - npm run test
+test:
+  stage: test
+  needs: [install_packages]
+  script:
+    - npm run test
 
 build-and-publish-docker-image:
   stage: release
-  needs: [install_packages]
-  # needs: [install_packages, build, test]
+  needs: [install_packages, build, test]
   image:
     name: gcr.io/kaniko-project/executor:v1.9.0-debug
     entrypoint: ['']
@@ -74,11 +72,10 @@ build-and-publish-docker-image:
   before_script:
     # Adds authentication to docker repository into kaniko config
     - echo "{\"auths\":{\"${NEXUS_DOCKER_REPOSITORY_URL}:${NEXUS_HTTPS_PORT}\":{\"username\":\"${DOCKER_CICD_USER}\",\"password\":\"${DOCKER_CICD_PASSWORD}\"}}}" > /kaniko/.docker/config.json
-  script:
-    - echo ${IMAGE_VERSION}
     - |
       if [ ${CI_COMMIT_TAG} == "" ]; then
         IMAGE_VERSION=${CI_COMMIT_TAG}
       fi
-    # - !reference [.kaniko-build-and-publish, script]
+  script:
+    - !reference [.kaniko-build-and-publish, script]
   
