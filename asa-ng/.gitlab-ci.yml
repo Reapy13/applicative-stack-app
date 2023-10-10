@@ -7,7 +7,7 @@ before_script:
 
 variables:
   ASA_PROJECT_DIR: "${CI_PROJECT_DIR}/asa-ng"
-  VERSION: "$(node -p require('${ASA_PROJECT_DIR}/package.json').version)-${CI_COMMIT_SHORT_SHA}"
+  VERSION: latest
 
 stages:
   - prepare
@@ -16,6 +16,19 @@ stages:
   - test
   - release
 
+get_version:
+  stage: prepare
+  script:
+    - |
+      if [ ${CI_COMMIT_TAG} ]; then
+        VERSION=${CI_COMMIT_TAG}
+      else
+        VERSION="$(node -p require\(\'${ASA_PROJECT_DIR}/package.json\'\).version)-${CI_COMMIT_SHORT_SHA}"
+      fi
+  artifacts:
+    paths:
+      - ${VERSION}
+
 install_packages:
   stage: prepare
   script:
@@ -23,6 +36,7 @@ install_packages:
   artifacts:
     paths:
       - asa-ng/node_modules/*
+      - ${VERSION}
 
 build:
   stage: build
@@ -69,10 +83,6 @@ build-and-publish-docker-image:
   before_script:
     # Adds authentication to docker repository into kaniko config
     - echo "{\"auths\":{\"${NEXUS_DOCKER_REPOSITORY_URL}:${NEXUS_HTTPS_PORT}\":{\"username\":\"${DOCKER_CICD_USER}\",\"password\":\"${DOCKER_CICD_PASSWORD}\"}}}" > /kaniko/.docker/config.json
-    - |
-      if [ ${CI_COMMIT_TAG} == "" ]; then
-        IMAGE_VERSION=${CI_COMMIT_TAG}
-      fi
   script:
     - !reference [.kaniko-build-and-publish, script]
   
