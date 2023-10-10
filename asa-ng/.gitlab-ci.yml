@@ -62,6 +62,6 @@ build-and-publish-docker-image:
     - echo "{\"auths\":{\"${NEXUS_DOCKER_REPOSITORY_URL}:${NEXUS_HTTPS_PORT}\":{\"username\":\"${DOCKER_CICD_USER}\",\"password\":\"${DOCKER_CICD_PASSWORD}\"}}}" > /kaniko/.docker/config.json
   script:
     - /kaniko/executor
-      --context="."
-      --dockerfile="./Dockerfile"
+      --context="${CI_PROJECT_DIR}"
+      --dockerfile="${CI_PROJECT_DIR}/Dockerfile"
       --destination="${IMAGE_NAME}:latest"
