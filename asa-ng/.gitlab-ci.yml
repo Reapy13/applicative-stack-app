@@ -7,22 +7,25 @@ before_script:
 
 variables:
   ASA_PROJECT_DIR: "${CI_PROJECT_DIR}/asa-ng"
-  VERSION: $(node -p require(${ASA_PROJECT_DIR}/package.json).version)-${CI_COMMIT_SHORT_SHA}
+  VERSION: latest
 
 stages:
-  # - prepare
+  - prepare
   # - build
   # - analyse
   # - test
   - release
 
-# install_packages:
-#   stage: prepare
-#   script:
-#     - npm ci
-#   artifacts:
-#     paths:
-#       - asa-ng/node_modules/*
+install_packages:
+  stage: prepare
+  before_script:
+    - VERSION="$(node -p require\(${ASA_PROJECT_DIR}/package.json\).version)-${CI_COMMIT_SHORT_SHA}"
+  script:
+    - npm ci
+
+  artifacts:
+    paths:
+      - asa-ng/node_modules/*
 
 # build:
 #   stage: build
@@ -58,6 +61,7 @@ stages:
 
 build-and-publish-docker-image:
   stage: release
+  needs: [install_packages]
   # needs: [install_packages, build, test]
   image:
     name: gcr.io/kaniko-project/executor:v1.9.0-debug
