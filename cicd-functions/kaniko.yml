@@ -1,6 +1,6 @@
 .kaniko-build-and-publish:
   script:
     - /kaniko/executor
-      --context="${context_dir}"
-      --dockerfile="${context_dir}/Dockerfile"
-      --destination="${image_name}:${image_version}"
+      --context="${CONTEXT_DIR}"
+      --dockerfile="${CONTEXT_DIR}/Dockerfile"
+      --destination="${IMAGE_NAME}:${IMAGE_VERSION}"
