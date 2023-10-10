@@ -53,12 +53,13 @@ build-and-publish-docker-image:
   stage: release
   needs: [install_packages, build, test]
   image:
-    name: grc.io/kaniko-project/executor:v1.14.0-debug
+    name: ${CI_REGISTRY}/dep/library/devops-images/kaniko:v1.9.0-debug-update3
     entrypoint: ['']
   variables:
     IMAGE_NAME: "${NEXUS_DOCKER_REPOSITORY_URL}/asa-ng"
   before_script:
-    - docker login ${NEXUS_DOCKER_REPOSITORY_URL}:${NEXUS_HTTPS_PORT} -u ${DOCKER_CICD_USER} -p ${DOCKER_CICD_PASSWORD}
+    # Adds authentication to docker repository into kaniko config
+    - echo "{\"auths\":{\"${NEXUS_DOCKER_REPOSITORY_URL}:${NEXUS_HTTPS_PORT}\":{\"username\":\"${DOCKER_CICD_USER}\",\"password\":\"${DOCKER_CICD_PASSWORD}\"}}}" > /kaniko/.docker/config.json
   script:
     - /kaniko/executor
       --context .
