@@ -7,7 +7,7 @@ before_script:
 
 variables:
   ASA_PROJECT_DIR: "${CI_PROJECT_DIR}/asa-ng"
-  VERSION: "$(node -p require(${ASA_PROJECT_DIR}/package.json).version)-${CI_COMMIT_SHORT_SHA}"
+  VERSION: $(node -p require(${ASA_PROJECT_DIR}/package.json).version)-${CI_COMMIT_SHORT_SHA}
 
 stages:
   # - prepare
