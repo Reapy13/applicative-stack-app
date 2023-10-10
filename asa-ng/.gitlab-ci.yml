@@ -7,7 +7,7 @@ before_script:
 
 variables:
   ASA_PROJECT_DIR: "${CI_PROJECT_DIR}/asa-ng"
-  VERSION: latest
+  VERSION: "$(node -p require('${ASA_PROJECT_DIR}/package.json').version)-${CI_COMMIT_SHORT_SHA}"
 
 stages:
   - prepare
@@ -20,7 +20,6 @@ install_packages:
   stage: prepare
   script:
     - npm ci
-    - VERSION="$(node -p require\(\'${ASA_PROJECT_DIR}/package.json\'\).version)-${CI_COMMIT_SHORT_SHA}"
   artifacts:
     paths:
       - asa-ng/node_modules/*
