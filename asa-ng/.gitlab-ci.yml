@@ -61,6 +61,8 @@ build-and-publish-docker-image:
     # Adds authentication to docker repository into kaniko config
     - echo "{\"auths\":{\"${NEXUS_DOCKER_REPOSITORY_URL}:${NEXUS_HTTPS_PORT}\":{\"username\":\"${DOCKER_CICD_USER}\",\"password\":\"${DOCKER_CICD_PASSWORD}\"}}}" > /kaniko/.docker/config.json
   script:
+    - echo "${CI_PROJECT_DIR}"
+    - ls
     - /kaniko/executor
       --context="${CI_PROJECT_DIR}"
       --dockerfile="${CI_PROJECT_DIR}/Dockerfile"
