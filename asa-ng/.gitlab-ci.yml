@@ -30,6 +30,10 @@ get-version:
   artifacts:
     reports:
       dotenv: ${ASA_PROJECT_DIR}/prepare.env
+  rules:
+    - if: '$CI_COMMIT_BRANCH != "develop" && $CI_COMMIT_BRANCH != "master"'
+      when: always
+
 
 install-packages:
   stage: prepare
@@ -86,4 +90,7 @@ build-and-publish-docker-image:
     - echo "{\"auths\":{\"${NEXUS_DOCKER_REPOSITORY_URL}:${NEXUS_HTTPS_PORT}\":{\"username\":\"${DOCKER_CICD_USER}\",\"password\":\"${DOCKER_CICD_PASSWORD}\"}}}" > /kaniko/.docker/config.json
   script:
     - !reference [.kaniko-build-and-publish, script]
+  rules:
+    - if: '$CI_COMMIT_BRANCH != "develop" && $CI_COMMIT_BRANCH != "master"'
+      when: always
   
