@@ -27,10 +27,9 @@ get-version:
         VERSION="$(node -p require\(\'${ASA_PROJECT_DIR}/package.json\'\).version)-${CI_COMMIT_SHORT_SHA}"
       fi
     - echo "VERSION=${VERSION}" >> prepare.env
-    - echo prepare.env
   artifacts:
     reports:
-      dotenv: prepare.env
+      dotenv: ${ASA_PROJECT_DIR}/prepare.env
 
 install-packages:
   stage: prepare
