@@ -5,7 +5,9 @@ RUN addgroup -S owners && adduser -S hfauchery -G owners
 RUN rm -rf /usr/share/nginx/html/*
 
 COPY --chown=hfauchery:owners ./dist/asa-ng /usr/share/nginx/html
+RUN chown hfauchery:owners /var/cache/nginx/
+RUN chown hfauchery:owners /var/run/
 
 USER hfauchery
 
-CMD ["nginx"]
+CMD ["nginx", "-g", "daemon off;"]
