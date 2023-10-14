@@ -1,6 +1,6 @@
 FROM nginx:1.25-alpine
 
-RUN addgroup owners && adduser hfauchery -G owners
+RUN addgroup -S owners && adduser -S hfauchery -G owners
 
 RUN rm -rf /usr/share/nginx/html/*
 
