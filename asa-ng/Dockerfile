@@ -1,13 +1,14 @@
 FROM nginx:1.25-alpine
 
-RUN addgroup -S owners && adduser -S hfauchery -G owners
+RUN adduser -S hfauchery -G root
 
 RUN rm -rf /usr/share/nginx/html/*
 
-COPY --chown=hfauchery:owners ./dist/asa-ng /usr/share/nginx/html
-RUN chown hfauchery:owners /var/cache/nginx/
-RUN chown hfauchery:owners /var/run/
+COPY --chown=hfauchery:root ./dist/asa-ng /usr/share/nginx/html
+RUN chown hfauchery:root /var/cache/nginx/
+RUN chown hfauchery:root /var/run/
 
 USER hfauchery
 
-CMD ["nginx", "-g", "daemon off;"]
+ENTRYPOINT ["nginx"]
+CMD ["-g", "daemon off;"]

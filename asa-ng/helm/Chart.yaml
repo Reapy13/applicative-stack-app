@@ -1,0 +1,9 @@
+apiVersion: v2
+name: asa-ng
+description: Asa-ng Helm chart
+
+type: application
+
+version: 0.0.1-SNAPSHOT
+
+appVersion: 0.0.1-SNAPSHOT
