@@ -108,6 +108,9 @@ publish-helm-chart:
   script:
     - helm package ${WORKDIR}/helm
     - curl -u ${HELM_CICD_USER}:${HELM_CICD_PASSWORD} $NEXUS_HELM_REPOSITORY_URL --upload-file ${WORKDIR}/asa-ng-0.0.1.tgz -v
+  rules:
+    - if: '$CI_COMMIT_BRANCH != "develop" && $CI_COMMIT_BRANCH != "master"'
+      when: always
 
 # deploy:
 #   stage: deploy
