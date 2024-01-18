@@ -101,11 +101,10 @@ publish-helm-chart:
   image:
     name: alpine/helm:3.13.3
   before_script:
-    # TODO : Changes variable names
-    - helm repo add asa-registry $NEXUS_HELM_REPOSITORY_URL --username $DOCKER_CICD_USER --password $DOCKER_CICD_PASSWORD
+    - helm repo add asa-registry $NEXUS_HELM_REPOSITORY_URL --username $HELM_CICD_USER --password $HELM_CICD_PASSWORD
   script:
     - helm package helm
-    - curl -u ${DOCKER_CICD_USER}:${DOCKER_CICD_PASSWORD} $NEXUS_HELM_REPOSITORY_URL --upload-file helm/asa-ng-0.0.1.tgz -v
+    - curl -u ${HELM_CICD_USER}:${HELM_CICD_PASSWORD} $NEXUS_HELM_REPOSITORY_URL --upload-file helm/asa-ng-0.0.1.tgz -v
 
 # deploy:
 #   stage: deploy
