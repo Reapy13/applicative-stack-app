@@ -14,7 +14,7 @@ stages:
   - analyse
   - test
   - release
-  - deploy
+#  - deploy
 
 get-version:
   stage: prepare
@@ -107,13 +107,13 @@ publish-helm-chart:
     - helm package helm
     - curl -u ${DOCKER_CICD_USER}:${DOCKER_CICD_PASSWORD} $NEXUS_HELM_REPOSITORY_URL --upload-file helm/asa-ng-0.0.1.tgz -v
 
-deploy:
-  stage: deploy
-  needs: [publish-helm-chart]
-  image:
-    name: alpine/helm:3.13.3
-  script:
-    - helm install asa-ng $NEXUS_HELM_REPOSITORY_URL/asa-ng
-  when:
-    never
+# deploy:
+#   stage: deploy
+#   needs: [publish-helm-chart]
+#   image:
+#     name: alpine/helm:3.13.3
+#   script:
+#     - helm install asa-ng $NEXUS_HELM_REPOSITORY_URL/asa-ng
+#   when:
+#     never
   
