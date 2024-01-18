@@ -100,11 +100,13 @@ publish-helm-chart:
   needs: [build-and-publish-docker-image]
   image:
     name: alpine/helm:3.13.3
+  variables:
+    HELM_DIR: "${ASA_PROJECT_DIR}/helm"
   before_script:
     - helm repo add asa-registry $NEXUS_HELM_REPOSITORY_URL --username $HELM_CICD_USER --password $HELM_CICD_PASSWORD
   script:
-    - helm package helm
-    - curl -u ${HELM_CICD_USER}:${HELM_CICD_PASSWORD} $NEXUS_HELM_REPOSITORY_URL --upload-file helm/asa-ng-0.0.1.tgz -v
+    - helm package $HELM_DIR
+    - curl -u ${HELM_CICD_USER}:${HELM_CICD_PASSWORD} $NEXUS_HELM_REPOSITORY_URL --upload-file ${HELM_DIR}/asa-ng-0.0.1.tgz -v
 
 # deploy:
 #   stage: deploy
