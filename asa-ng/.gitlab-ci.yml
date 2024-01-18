@@ -14,7 +14,7 @@ stages:
   - analyse
   - test
   - release
-#  - deploy
+  - deploy
 
 get-version:
   stage: prepare
@@ -113,5 +113,7 @@ deploy:
   image:
     name: alpine/helm:3.13.3
   script:
-    - helm install asa-ng $NEXUS_HELM_REPOSITORY_URL/asa-ng  
+    - helm install asa-ng $NEXUS_HELM_REPOSITORY_URL/asa-ng
+  when:
+    never
   
