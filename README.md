@@ -1,6 +1,6 @@
 # Applicative-stack-app
 
-[[TOC]]
+[[_TOC_]]
 
 # Description
 This project is about to how using good technologies and good practices.
