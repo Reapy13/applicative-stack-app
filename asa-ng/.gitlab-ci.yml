@@ -117,7 +117,7 @@ publish-helm-chart:
     - cd $WORKDIR
     - helm repo add asa-registry $NEXUS_HELM_REPOSITORY_URL --username $HELM_CICD_USER --password $HELM_CICD_PASSWORD
   script:
-    - helm package ${WORKDIR}/helm --version $VERSION
+    - helm package ${WORKDIR}/helm --version $VERSION --app-version $VERSION
     - curl -u ${HELM_CICD_USER}:${HELM_CICD_PASSWORD} $NEXUS_HELM_REPOSITORY_URL --upload-file $CHART_PATH -v
   rules:
     - if: '$CI_COMMIT_BRANCH != "master"'
