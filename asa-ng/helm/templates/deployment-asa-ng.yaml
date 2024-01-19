@@ -15,7 +15,7 @@ spec:
         app: asa-ng
     spec:
       containers:
-        - image: {{ .Values.registry_url}}/asa-ng:{{ .Chart.appVersion }}
+        - image: {{ .Values.registry_url }}/asa-ng:{{ .Values.version }}
           name: asa-ng
           ports:
             - containerPort: 80
