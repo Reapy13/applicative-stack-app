@@ -35,7 +35,6 @@ get-version:
     - if: '$CI_COMMIT_BRANCH != "develop" && $CI_COMMIT_BRANCH != "master"'
       when: always
 
-
 install-packages:
   stage: prepare
   script:
@@ -52,7 +51,8 @@ build:
   artifacts:
     paths:
       - asa-ng/dist/*
-  
+
+
 sonarqube-check:
   stage: analyse
   needs: [install-packages]
@@ -66,15 +66,24 @@ sonarqube-check:
     key: "${CI_JOB_NAME}"
     paths:
       - .sonar/cache
-  script: 
+  script:
     - sonar-scanner
   allow_failure: true
+
+npm-audit:
+  stage: analyse
+  needs: [install-packages]
+  script:
+    - npm audit
+  allow_failure: true
+
 
 test:
   stage: test
   needs: [install-packages]
   script:
     - npm run test
+
 
 build-and-publish-docker-image:
   stage: release
@@ -94,6 +103,7 @@ build-and-publish-docker-image:
   rules:
     - if: '$CI_COMMIT_BRANCH == "develop"'
       when: always
+
 # TODO : Thinking about rename steps and needs
 publish-helm-chart:
   stage: release
@@ -111,6 +121,7 @@ publish-helm-chart:
   rules:
     - if: '$CI_COMMIT_BRANCH == "develop"'
       when: always
+
 
 # deploy:
 #   stage: deploy
