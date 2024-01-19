@@ -92,7 +92,7 @@ build-and-publish-docker-image:
   script:
     - !reference [.kaniko-build-and-publish, script]
   rules:
-    - if: '$CI_COMMIT_BRANCH != "develop" && $CI_COMMIT_BRANCH != "master"'
+    - if: '$CI_COMMIT_BRANCH == "develop"'
       when: always
 # TODO : Thinking about rename steps and needs
 publish-helm-chart:
@@ -109,7 +109,7 @@ publish-helm-chart:
     - helm package ${WORKDIR}/helm
     - curl -u ${HELM_CICD_USER}:${HELM_CICD_PASSWORD} $NEXUS_HELM_REPOSITORY_URL --upload-file ${WORKDIR}/asa-ng-0.0.1.tgz -v
   rules:
-    - if: '$CI_COMMIT_BRANCH != "develop" && $CI_COMMIT_BRANCH != "master"'
+    - if: '$CI_COMMIT_BRANCH == "develop"'
       when: always
 
 # deploy:
