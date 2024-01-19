@@ -32,7 +32,7 @@ get-version:
     reports:
       dotenv: ${ASA_PROJECT_DIR}/prepare.env
   rules:
-    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - if: '$CI_COMMIT_BRANCH != "master"'
       when: always
 
 install-packages:
@@ -101,7 +101,7 @@ build-and-publish-docker-image:
   script:
     - !reference [.kaniko-build-and-publish, script]
   rules:
-    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - if: '$CI_COMMIT_BRANCH != "master"'
       when: always
 
 # TODO : Thinking about rename steps and needs
@@ -112,15 +112,16 @@ publish-helm-chart:
     name: alpine/helm:3.13.3
   variables:
     WORKDIR: "${ASA_PROJECT_DIR}"
-    CHART_PATH: ${WORKDIR}/asa-ng-${VERSION}.tgz
+    CHART_VERSION: ${VERSION}
+    CHART_PATH: ${WORKDIR}/asa-ng-${CHART_VERSION}.tgz
   before_script:
     - cd $WORKDIR
     - helm repo add asa-registry $NEXUS_HELM_REPOSITORY_URL --username $HELM_CICD_USER --password $HELM_CICD_PASSWORD
   script:
-    - helm package ${WORKDIR}/helm --version ${VERSION}
+    - helm package ${WORKDIR}/helm --version ${CHART_VERSION}
     - curl -u ${HELM_CICD_USER}:${HELM_CICD_PASSWORD} $NEXUS_HELM_REPOSITORY_URL --upload-file $CHART_PATH -v
   rules:
-    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - if: '$CI_COMMIT_BRANCH != "master"'
       when: always
   artifacts:
     paths:
@@ -134,10 +135,11 @@ deploy:
     name: alpine/helm:3.13.3
   variables:
     WORKDIR: "${ASA_PROJECT_DIR}"
-    CHART_PATH: ${WORKDIR}/asa-ng-${VERSION}.tgz
+    CHART_VERSION: ${VERSION}
+    CHART_PATH: ${WORKDIR}/asa-ng-${CHART_VERSION}.tgz
   script:
     - helm install asa-ng $CHART_PATH --kube-apiserver $KUBE_URL --namespace asa --kube-token sha256~Tz340-tK_qV9cO0ohbdBRh_meKibYRpqrWuYlSK7iA8
   rules:
-    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - if: '$CI_COMMIT_BRANCH != "master"'
       when: always
   
