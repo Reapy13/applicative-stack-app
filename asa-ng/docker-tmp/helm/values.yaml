@@ -1,3 +1,0 @@
-env: dev
-registry_url: https://nexus-asa-nexus.apps.cicd.arcus.soprasteria.com/repository/asa
-version: latest
