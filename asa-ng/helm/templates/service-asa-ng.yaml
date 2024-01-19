@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: asa-ng-service
+spec:
+  type: ClusterIP
+  selector:
+    component: asa-ng
+  ports:
+  - port: 80
+    targetPort: 80
