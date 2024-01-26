@@ -137,7 +137,7 @@ deploy:
     WORKDIR: "${ASA_PROJECT_DIR}"
     CHART_PATH: ${WORKDIR}/asa-ng-${VERSION}.tgz
   script:
-    - helm install asa-ng $CHART_PATH --kube-apiserver $KUBE_URL --kube-token sha256~Tz340-tK_qV9cO0ohbdBRh_meKibYRpqrWuYlSK7iA8 --namespace asa --set version=${VERSION}
+    - helm install asa-ng $CHART_PATH --kube-apiserver $KUBE_URL --kube-token sha256~eHG7tep2p6XdLklifLsQoi8FKtSI_mw98Lzffpu6rlc --namespace asa --set version=${VERSION}
   rules:
     - if: '$CI_COMMIT_BRANCH != "master" || $HAS_TO_DEPLOY == "true"'
       when: always
