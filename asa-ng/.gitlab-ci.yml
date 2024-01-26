@@ -52,6 +52,8 @@ build:
   artifacts:
     paths:
       - asa-ng/dist/*
+  rules:
+    - when: on_success
 
 
 sonarqube-check:
@@ -70,6 +72,8 @@ sonarqube-check:
   script:
     - sonar-scanner
   allow_failure: true
+  rules:
+    - when: on_success
 
 npm-audit:
   stage: analyse
@@ -77,6 +81,8 @@ npm-audit:
   script:
     - npm audit
   allow_failure: true
+  rules:
+    - when: on_success
 
 
 test:
@@ -84,6 +90,8 @@ test:
   needs: [install-packages]
   script:
     - npm run test
+  rules:
+    - when: on_success
 
 
 build-and-publish-docker-image:
@@ -102,6 +110,7 @@ build-and-publish-docker-image:
   script:
     - !reference [.kaniko-build-and-publish, script]
   rules:
+    - when: on_success
     - if: '$CI_COMMIT_BRANCH != "master"'
       when: always
 
@@ -121,6 +130,7 @@ publish-helm-chart:
     - helm package ${WORKDIR}/helm --version $VERSION --app-version $VERSION
     - curl -u ${HELM_CICD_USER}:${HELM_CICD_PASSWORD} $NEXUS_HELM_REPOSITORY_URL --upload-file $CHART_PATH -v
   rules:
+    - when: on_success
     - if: '$CI_COMMIT_BRANCH != "master"'
       when: always
   artifacts:
@@ -139,6 +149,7 @@ deploy:
   script:
     - helm install asa-ng $CHART_PATH --kube-apiserver $KUBE_URL --kube-token sha256~eHG7tep2p6XdLklifLsQoi8FKtSI_mw98Lzffpu6rlc --namespace asa --set version=${VERSION}
   rules:
+    - when: on_success
     - if: '$CI_COMMIT_BRANCH != "master" || $HAS_TO_DEPLOY == "true"'
       when: always
   
