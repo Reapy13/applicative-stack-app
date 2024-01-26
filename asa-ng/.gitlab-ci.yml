@@ -6,6 +6,7 @@ before_script:
     - cd asa-ng
 
 variables:
+  HAS_TO_DEPLOY: "false"
   ASA_PROJECT_DIR: "${CI_PROJECT_DIR}/asa-ng"
 
 stages:
@@ -138,6 +139,6 @@ deploy:
   script:
     - helm install asa-ng $CHART_PATH --kube-apiserver $KUBE_URL --kube-token sha256~Tz340-tK_qV9cO0ohbdBRh_meKibYRpqrWuYlSK7iA8 --namespace asa --set version=${VERSION}
   rules:
-    - if: '$CI_COMMIT_BRANCH != "master"'
+    - if: '$CI_COMMIT_BRANCH != "master" OR HAS_TO_DEPLOY = "true"'
       when: always
   
