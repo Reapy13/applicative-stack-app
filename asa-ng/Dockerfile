@@ -4,7 +4,7 @@ RUN adduser -S hfauchery -G root
 
 RUN rm -rf /usr/share/nginx/html/*
 
-COPY --chown=hfauchery:root ./dist/asa-ng /usr/share/nginx/html
+RUN cp -r --chown=hfauchery:root ./dist/asa-ng /usr/share/nginx/html
 RUN chown hfauchery:root /var/cache/nginx/
 RUN chown hfauchery:root /var/run/
 
