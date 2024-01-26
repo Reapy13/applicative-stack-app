@@ -1,15 +1,12 @@
 FROM nginx:1.25-alpine
 
-RUN adduser -S hfauchery -G root
-
 RUN rm -rf /usr/share/nginx/html/*
 
-RUN cp ./dist/asa-ng /usr/share/nginx/html
-RUN chown hfauchery:root /usr/share/nginx/html
-RUN chown hfauchery:root /var/cache/nginx/
-RUN chown hfauchery:root /var/run/
+COPY --chown=nginx:nginx ./dist/asa-ng /usr/share/nginx/html
+#RUN chown nginx:nginx /var/cache/nginx/
+#RUN chown nginx:nginx /var/run/
 
-USER hfauchery
+USER nginx
 
 ENTRYPOINT ["nginx"]
 CMD ["-g", "daemon off;"]
