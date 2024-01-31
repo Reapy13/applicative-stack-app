@@ -9,9 +9,6 @@ COPY nginx/default.conf /etc/nginx/conf.d/default.conf
 
 COPY --chown=nginx:nginx ./dist/asa-ng /usr/share/nginx/html
 
-RUN chmod 775 /usr/share/nginx/html
-RUN chmod 775 /var/cache/nginx/
-
 USER nginx
 
 ENTRYPOINT ["nginx"]
