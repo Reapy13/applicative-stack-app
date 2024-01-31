@@ -9,8 +9,8 @@ COPY nginx/default.conf /etc/nginx/conf.d/default.conf
 
 COPY --chown=nginx:nginx ./dist/asa-ng /usr/share/nginx/html
 
-RUN chown nginx:nginx /var/cache/nginx/
-RUN chown nginx:nginx /var/run/
+RUN chmod 707 /var/cache/nginx/
+RUN chmod 707 /var/run/
 
 USER nginx
 
