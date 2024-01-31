@@ -7,10 +7,10 @@ RUN rm /etc/nginx/conf.d/default.conf
 COPY nginx/nginx.conf /etc/nginx/nginx.conf
 COPY nginx/default.conf /etc/nginx/conf.d/default.conf
 
-COPY --chown=nginx:nginx ./dist/asa-ng /usr/share/nginx/html
+COPY ./dist/asa-ng /usr/share/nginx/html
 
-RUN chmod 707 /var/cache/nginx/
-RUN chmod 707 /var/run/
+RUN chmod 757 /usr/share/nginx/html
+RUN chmod 757 /var/cache/nginx/
 
 USER nginx
 
