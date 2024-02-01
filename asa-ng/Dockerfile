@@ -12,4 +12,3 @@ COPY --chown=nginx:nginx ./dist/asa-ng /usr/share/nginx/html
 USER nginx
 
 ENTRYPOINT ["nginx"]
-CMD ["-g", "daemon off;"]
