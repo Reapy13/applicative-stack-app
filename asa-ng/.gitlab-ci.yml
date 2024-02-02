@@ -150,6 +150,6 @@ deploy:
     - helm install asa-ng $CHART_PATH --kube-apiserver $KUBE_URL --kube-token sha256~YlrHvKIu6RNethniFTL8JrXtfdBFib__-unUhJbUHQM --namespace asa --set version=${VERSION}
   rules:
     - when: on_success
-    - if: '$CI_COMMIT_BRANCH != "master" || $HAS_TO_DEPLOY == "true"'
+    - if: '$CI_COMMIT_BRANCH != "master" && $HAS_TO_DEPLOY == "true"'
       when: always
   
