@@ -18,7 +18,7 @@ spec:
         - image: {{ .Values.registry_url }}/asa-ng:{{ .Values.version }}
           name: asa-ng
           ports:
-            - containerPort: 8080
+            - containerPort: 80
           resources:
             requests:
               cpu: 50m
@@ -28,7 +28,7 @@ spec:
               memory: 64Mi
           livenessProbe:
             httpGet:
-              path: /index.html
+              path: /
               port: 80
             initialDelaySeconds: 10
             periodSeconds: 5
