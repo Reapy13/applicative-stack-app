@@ -59,6 +59,7 @@ build:
 sonarqube-check:
   stage: analyse
   needs: [install-packages]
+  needs: [install-packages]
   image: 
     name: sonarsource/sonar-scanner-cli:latest
     entrypoint: [""]
@@ -77,6 +78,7 @@ sonarqube-check:
 
 npm-audit:
   stage: analyse
+  needs: [install-packages]
   needs: [install-packages]
   script:
     - npm audit
