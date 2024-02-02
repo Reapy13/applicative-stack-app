@@ -57,6 +57,7 @@ build:
 
 sonarqube-check:
   stage: analyse
+  needs: [install-packages]
   image: 
     name: sonarsource/sonar-scanner-cli:latest
     entrypoint: [""]
@@ -75,6 +76,7 @@ sonarqube-check:
 
 npm-audit:
   stage: analyse
+  needs: [install-packages]
   script:
     - npm audit
   allow_failure: true
@@ -106,9 +108,8 @@ build-and-publish-docker-image:
   script:
     - !reference [.kaniko-build-and-publish, script]
   rules:
-    - when: on_success
-    - if: '$CI_COMMIT_BRANCH != "master"'
-      when: always
+    - if: '$CI_COMMIT_BRANCH != "master" && $CI_JOB_MANUAL == "false"'
+      when: on_success
 
 # TODO : Thinking about rename steps and needs
 publish-helm-chart:
@@ -126,9 +127,8 @@ publish-helm-chart:
     - helm package ${WORKDIR}/helm --version $VERSION --app-version $VERSION
     - curl -u ${HELM_CICD_USER}:${HELM_CICD_PASSWORD} $NEXUS_HELM_REPOSITORY_URL --upload-file $CHART_PATH -v
   rules:
-    - when: on_success
-    - if: '$CI_COMMIT_BRANCH != "master"'
-      when: always
+    - if: '$CI_COMMIT_BRANCH != "master" && $CI_JOB_MANUAL == "false"'
+      when: on_success
   artifacts:
     paths:
       - $CHART_PATH
