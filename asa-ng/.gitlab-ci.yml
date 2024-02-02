@@ -46,7 +46,6 @@ install-packages:
 
 build:
   stage: build
-  needs: [install-packages]
   script:
     - npm run build
   artifacts:
@@ -58,7 +57,6 @@ build:
 
 sonarqube-check:
   stage: analyse
-  needs: [install-packages]
   image: 
     name: sonarsource/sonar-scanner-cli:latest
     entrypoint: [""]
@@ -77,7 +75,6 @@ sonarqube-check:
 
 npm-audit:
   stage: analyse
-  needs: [install-packages]
   script:
     - npm audit
   allow_failure: true
@@ -96,7 +93,6 @@ test:
 
 build-and-publish-docker-image:
   stage: release
-  needs: [get-version, build, test]
   image:
     name: gcr.io/kaniko-project/executor:v1.9.0-debug
     entrypoint: ['']
@@ -117,7 +113,7 @@ build-and-publish-docker-image:
 # TODO : Thinking about rename steps and needs
 publish-helm-chart:
   stage: release
-  needs: [get-version, build-and-publish-docker-image]
+  needs: [build-and-publish-docker-image]
   image:
     name: alpine/helm:3.13.3
   variables:
@@ -140,7 +136,6 @@ publish-helm-chart:
 
 deploy:
   stage: deploy
-  needs: [get-version, publish-helm-chart]
   image:
     name: alpine/helm:3.13.3
   variables:
@@ -149,7 +144,6 @@ deploy:
   script:
     - helm install asa-ng $CHART_PATH --kube-apiserver $KUBE_URL --kube-token sha256~YlrHvKIu6RNethniFTL8JrXtfdBFib__-unUhJbUHQM --namespace asa --set version=${VERSION}
   rules:
-    - when: on_success
     - if: '$CI_COMMIT_BRANCH != "master" && $HAS_TO_DEPLOY == "true"'
-      when: always
+      when: on_success
   
