@@ -6,6 +6,7 @@ before_script:
     - cd asa-ng
 
 variables:
+  HAS_TO_DEPLOY: "false"
   ASA_PROJECT_DIR: "${CI_PROJECT_DIR}/asa-ng"
 
 stages:
@@ -32,7 +33,7 @@ get-version:
     reports:
       dotenv: ${ASA_PROJECT_DIR}/prepare.env
   rules:
-    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - if: '$CI_COMMIT_BRANCH != "master"'
       when: always
 
 install-packages:
@@ -51,6 +52,8 @@ build:
   artifacts:
     paths:
       - asa-ng/dist/*
+  rules:
+    - when: on_success
 
 
 sonarqube-check:
@@ -69,6 +72,8 @@ sonarqube-check:
   script:
     - sonar-scanner
   allow_failure: true
+  rules:
+    - when: on_success
 
 npm-audit:
   stage: analyse
@@ -76,6 +81,8 @@ npm-audit:
   script:
     - npm audit
   allow_failure: true
+  rules:
+    - when: on_success
 
 
 test:
@@ -83,6 +90,8 @@ test:
   needs: [install-packages]
   script:
     - npm run test
+  rules:
+    - when: on_success
 
 
 build-and-publish-docker-image:
@@ -101,13 +110,14 @@ build-and-publish-docker-image:
   script:
     - !reference [.kaniko-build-and-publish, script]
   rules:
-    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - when: on_success
+    - if: '$CI_COMMIT_BRANCH != "master"'
       when: always
 
 # TODO : Thinking about rename steps and needs
 publish-helm-chart:
   stage: release
-  needs: [build-and-publish-docker-image]
+  needs: [get-version, build-and-publish-docker-image]
   image:
     name: alpine/helm:3.13.3
   variables:
@@ -117,10 +127,11 @@ publish-helm-chart:
     - cd $WORKDIR
     - helm repo add asa-registry $NEXUS_HELM_REPOSITORY_URL --username $HELM_CICD_USER --password $HELM_CICD_PASSWORD
   script:
-    - helm package ${WORKDIR}/helm --version ${VERSION}
+    - helm package ${WORKDIR}/helm --version $VERSION --app-version $VERSION
     - curl -u ${HELM_CICD_USER}:${HELM_CICD_PASSWORD} $NEXUS_HELM_REPOSITORY_URL --upload-file $CHART_PATH -v
   rules:
-    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - when: on_success
+    - if: '$CI_COMMIT_BRANCH != "master"'
       when: always
   artifacts:
     paths:
@@ -129,15 +140,16 @@ publish-helm-chart:
 
 deploy:
   stage: deploy
-  needs: [publish-helm-chart]
+  needs: [get-version, publish-helm-chart]
   image:
     name: alpine/helm:3.13.3
   variables:
     WORKDIR: "${ASA_PROJECT_DIR}"
     CHART_PATH: ${WORKDIR}/asa-ng-${VERSION}.tgz
   script:
-    - helm install asa-ng $CHART_PATH --kube-apiserver $KUBE_URL --namespace asa --kube-token sha256~Tz340-tK_qV9cO0ohbdBRh_meKibYRpqrWuYlSK7iA8
+    - helm install asa-ng $CHART_PATH --kube-apiserver $KUBE_URL --kube-token sha256~YlrHvKIu6RNethniFTL8JrXtfdBFib__-unUhJbUHQM --namespace asa --set version=${VERSION}
   rules:
-    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - when: on_success
+    - if: '$CI_COMMIT_BRANCH != "master" || $HAS_TO_DEPLOY == "true"'
       when: always
   

@@ -15,7 +15,7 @@ spec:
   wildcardPolicy: None
 status:
   ingress:
-    - host: asa-NG-asa.apps.cicd.arcus.soprasteria.com
+    - host: asa-ng-asa.apps.cicd.arcus.soprasteria.com
       routerName: default
       conditions:
         - type: Admitted
