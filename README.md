@@ -1,6 +1,6 @@
 # Applicative-stack-app
 
-[![pipeline status](https://innersource.soprasteria.com/hfauchery/applicative-stack-app/badges/develop/pipeline.svg)](https://innersource.soprasteria.com/hfauchery/applicative-stack-app/-/commits/develop)
+[![pipeline status](https://innersource.soprasteria.com/hfauchery/applicative-stack-app/badges/develop/pipeline.svg)](https://innersource.soprasteria.com/hfauchery/applicative-stack-app/-/commits/master)
 [![Latest Release](https://innersource.soprasteria.com/hfauchery/applicative-stack-app/-/badges/release.svg)](https://innersource.soprasteria.com/hfauchery/applicative-stack-app/-/releases)
 
 [[_TOC_]]
