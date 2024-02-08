@@ -46,7 +46,6 @@ install-packages:
 
 build:
   stage: build
-  needs: [install-packages]
   script:
     - npm run build
   artifacts:
@@ -96,7 +95,6 @@ test:
 
 build-and-publish-docker-image:
   stage: release
-  needs: [get-version, build, test]
   image:
     name: gcr.io/kaniko-project/executor:v1.9.0-debug
     entrypoint: ['']
@@ -110,9 +108,8 @@ build-and-publish-docker-image:
   script:
     - !reference [.kaniko-build-and-publish, script]
   rules:
-    - when: on_success
-    - if: '$CI_COMMIT_BRANCH != "master"'
-      when: always
+    - if: '$CI_COMMIT_BRANCH != "master" && $CI_JOB_MANUAL != "true"'
+      when: on_success
 
 # TODO : Thinking about rename steps and needs
 publish-helm-chart:
@@ -130,9 +127,8 @@ publish-helm-chart:
     - helm package ${WORKDIR}/helm --version $VERSION --app-version $VERSION
     - curl -u ${HELM_CICD_USER}:${HELM_CICD_PASSWORD} $NEXUS_HELM_REPOSITORY_URL --upload-file $CHART_PATH -v
   rules:
-    - when: on_success
-    - if: '$CI_COMMIT_BRANCH != "master"'
-      when: always
+    - if: '$CI_COMMIT_BRANCH != "master" && $CI_JOB_MANUAL != "true"'
+      when: on_success
   artifacts:
     paths:
       - $CHART_PATH
@@ -140,7 +136,6 @@ publish-helm-chart:
 
 deploy:
   stage: deploy
-  needs: [get-version, publish-helm-chart]
   image:
     name: alpine/helm:3.13.3
   variables:
@@ -149,7 +144,6 @@ deploy:
   script:
     - helm install asa-ng $CHART_PATH --kube-apiserver $KUBE_URL --kube-token sha256~YlrHvKIu6RNethniFTL8JrXtfdBFib__-unUhJbUHQM --namespace asa --set version=${VERSION}
   rules:
-    - when: on_success
-    - if: '$CI_COMMIT_BRANCH != "master" || $HAS_TO_DEPLOY == "true"'
-      when: always
+    - if: '$CI_COMMIT_BRANCH != "master" && $HAS_TO_DEPLOY == "true"'
+      when: on_success
   
