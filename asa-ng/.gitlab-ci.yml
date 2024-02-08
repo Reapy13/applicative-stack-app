@@ -114,7 +114,7 @@ build-and-publish-docker-image:
 # TODO : Thinking about rename steps and needs
 publish-helm-chart:
   stage: release
-  needs: [build-and-publish-docker-image]
+  needs: [get-version, build-and-publish-docker-image]
   image:
     name: alpine/helm:3.13.3
   variables:
@@ -124,7 +124,6 @@ publish-helm-chart:
     - cd $WORKDIR
     - helm repo add asa-registry $NEXUS_HELM_REPOSITORY_URL --username $HELM_CICD_USER --password $HELM_CICD_PASSWORD
   script:
-    - echo $VERSION
     - helm package ${WORKDIR}/helm --version $VERSION --app-version $VERSION
     - curl -u ${HELM_CICD_USER}:${HELM_CICD_PASSWORD} $NEXUS_HELM_REPOSITORY_URL --upload-file $CHART_PATH -v
   rules:
