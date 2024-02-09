@@ -1,0 +1,9 @@
+FROM quay.io/quarkus/quarkus-micro-image:2.0
+
+WORKDIR /work/
+
+COPY target/*-runner /work/application
+
+RUN chmod 775 /work
+
+ENTRYPOINT ["./application"]
