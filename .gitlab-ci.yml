@@ -16,6 +16,7 @@ release-docker-images:
   image:
     name: gcr.io/kaniko-project/executor:v1.9.0-debug
   variables:
+    CONTEXT_DIR: $ASA_PROJECT_DIR
     DOCKERFILE_PATH: "${ASA_PROJECT_DIR}/Dockerfile.quarkus-cli"
     IMAGE_NAME: "${NEXUS_DOCKER_REPOSITORY_URL}/quarkus-cli"
     IMAGE_VERSION: "latest"
