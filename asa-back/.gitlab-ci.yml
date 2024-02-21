@@ -3,19 +3,18 @@ include:
   - local: cicd-functions/helm.yml
   - local: cicd-functions/kaniko.yml
 
-image: node:18-alpine
+image: maven:3.9.6-eclipse-temurin-21
 before_script:
-    - cd asa-ng
+    - cd asa-back
 
 variables:
-  ASA_PROJECT_DIR: "${CI_PROJECT_DIR}/asa-ng"
-  APP_NAME: asa-ng
+  ASA_PROJECT_DIR: "${CI_PROJECT_DIR}/asa-back"
+  APP_NAME: asa-back
 
 stages:
   - prepare
-  - build
-  - analyse
   - test
+  - package
   - release
   - deploy
 
@@ -27,43 +26,29 @@ get-version:
       if [ ${CI_COMMIT_TAG} ]; then
         VERSION=${CI_COMMIT_TAG}
       else
-        VERSION="$(node -p require\(\'${ASA_PROJECT_DIR}/package.json\'\).version)-${CI_COMMIT_SHORT_SHA}"
+        VERSION="$(mvn org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=project.version -q -DforceStdout)-${CI_COMMIT_SHORT_SHA}"
       fi
     - echo "VERSION=${VERSION}" >> prepare.env
-
-install-packages:
-  stage: prepare
-  script:
-    - npm ci
-  artifacts:
-    paths:
-      - asa-ng/node_modules/*
-
-build:
-  stage: build
-  script:
-    - npm run build
-  artifacts:
-    paths:
-      - asa-ng/dist/*
-  rules:
-    - when: on_success
-
-npm-audit:
-  stage: analyse
-  needs: [install-packages]
-  script:
-    - npm audit
-  allow_failure: true
-  rules:
-    - when: on_success
 
 
 test:
   stage: test
-  needs: [install-packages]
   script:
-    - npm run test
+    - mvn clean verify
+  rules:
+    - when: on_success
+
+
+build:
+  stage: package
+  needs: [test]
+  image: 
+    name: quay.io/quarkus/quarkus-micro-image:2.0
+  script:
+    - quarkus build --native --no-tests -Dquarkus.native.container-build=true
+  artifacts:
+    paths:
+      - asa-back/target/*-runner
   rules:
     - when: on_success
 
@@ -78,4 +63,3 @@ publish-helm-chart:
 
 deploy:
   extends: .deploy-helm-chart
-  

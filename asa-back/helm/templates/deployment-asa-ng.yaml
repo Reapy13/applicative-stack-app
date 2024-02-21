@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: asa-back
+  name: asa-back
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: asa-back
+  template:
+    metadata:
+      labels:
+        app: asa-back
+    spec:
+      containers:
+        - image: {{ .Values.registry_url }}/asa-back:{{ .Values.version }}
+          name: asa-back
+          ports:
+            - containerPort: 8081
+          resources:
+            requests:
+              cpu: 50m
+              memory: 16Mi
+            limits:
+              cpu: 100m
+              memory: 64Mi
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+      imagePullSecrets:
+        - name: docker-registry-credentials

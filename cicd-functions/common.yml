@@ -1,0 +1,13 @@
+variables:
+  HAS_TO_DEPLOY: "false"
+
+.get-version:
+  stage: prepare
+  variables:
+    VERSION: latest
+  artifacts:
+    reports:
+      dotenv: ${ASA_PROJECT_DIR}/prepare.env
+  rules:
+    - if: '$CI_COMMIT_BRANCH != "master"'
+      when: always

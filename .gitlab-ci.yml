@@ -1,5 +1,13 @@
+include:
+  - local: cicd-functions/sonarqube.yml
+
+variables:
+  ASA_PROJECT_DIR: "${CI_PROJECT_DIR}"
+
 stages:
   - trigger-child-pipelines
+  - analyse
+
 
 asa-ng:
   stage: trigger-child-pipelines
@@ -9,3 +17,16 @@ asa-ng:
   only:
     changes:
       - asa-ng/**/*
+
+asa-back:
+  stage: trigger-child-pipelines
+  trigger:
+    include: asa-back/.gitlab-ci.yml
+    strategy: depend
+  only:
+    changes:
+      - asa-back/**/*
+
+
+sonarqube-check:
+  extends: .sonarqube-check

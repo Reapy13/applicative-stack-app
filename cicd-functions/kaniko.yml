@@ -1,6 +1,20 @@
 .kaniko-build-and-publish:
+  stage: release
+  image:
+    name: gcr.io/kaniko-project/executor:v1.9.0-debug
+    entrypoint: ['']
+  variables:
+    CONTEXT_DIR: "${ASA_PROJECT_DIR}"
+    IMAGE_VERSION: ${VERSION}
+    IMAGE_NAME: "${NEXUS_DOCKER_REPOSITORY_URL}/${APP_NAME}"
+  before_script:
+    # Adds authentication to docker repository into kaniko config
+    - echo "{\"auths\":{\"${NEXUS_DOCKER_REPOSITORY_URL}:${NEXUS_HTTPS_PORT}\":{\"username\":\"${DOCKER_CICD_USER}\",\"password\":\"${DOCKER_CICD_PASSWORD}\"}}}" > /kaniko/.docker/config.json
   script:
     - /kaniko/executor
       --context="${CONTEXT_DIR}"
       --dockerfile="${CONTEXT_DIR}/Dockerfile"
       --destination="${IMAGE_NAME}:${IMAGE_VERSION}"
+  rules:
+    - if: '$CI_COMMIT_BRANCH != "master" && $CI_JOB_MANUAL != "true"'
+      when: on_success

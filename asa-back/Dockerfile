@@ -6,4 +6,6 @@ COPY target/*-runner /work/application
 
 RUN chmod 775 /work
 
+USER operator
+
 ENTRYPOINT ["./application"]

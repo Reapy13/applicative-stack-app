@@ -1,0 +1,33 @@
+.deploy-helm-chart:
+  stage: deploy
+  image:
+    name: alpine/helm:3.13.3
+  variables:
+    WORKDIR: "${ASA_PROJECT_DIR}"
+    CHART_PATH: ${WORKDIR}/${APP_NAME}-${VERSION}.tgz
+  script:
+    - helm install $APP_NAME $CHART_PATH --kube-apiserver $KUBE_URL --kube-token sha256~7LnQmNRT2EgjHM_2XD6ilGOCwY7TbWgdnE0fFwlOMig --namespace asa --set version=${VERSION}
+  rules:
+    - if: '$CI_COMMIT_BRANCH != "master" && $HAS_TO_DEPLOY == "true"'
+      when: on_success
+
+# TODO : Thinking about rename steps and needs
+.publish-helm-chart:
+  stage: release
+  image:
+    name: alpine/helm:3.13.3
+  variables:
+    WORKDIR: "${ASA_PROJECT_DIR}"
+    CHART_PATH: ${WORKDIR}/${APP_NAME}-${VERSION}.tgz
+  before_script:
+    - cd $WORKDIR
+    - helm repo add asa-registry $NEXUS_HELM_REPOSITORY_URL --username $HELM_CICD_USER --password $HELM_CICD_PASSWORD
+  script:
+    - helm package ${WORKDIR}/helm --version $VERSION --app-version $VERSION
+    - curl -u ${HELM_CICD_USER}:${HELM_CICD_PASSWORD} $NEXUS_HELM_REPOSITORY_URL --upload-file $CHART_PATH -v
+  rules:
+    - if: '$CI_COMMIT_BRANCH != "master" && $CI_JOB_MANUAL != "true"'
+      when: on_success
+  artifacts:
+    paths:
+      - $CHART_PATH
