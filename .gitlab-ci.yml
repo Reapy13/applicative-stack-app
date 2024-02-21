@@ -47,7 +47,7 @@ asa-back:
 
 sonarqube-check:
   extends: .sonarqube-check
-  only:
-    changes:
+  rules:
+    - changes:
       - asa-ng/**/*
       - asa-back/**/*
