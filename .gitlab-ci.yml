@@ -2,9 +2,6 @@ include:
   - local: common/cicd-functions/kaniko.yml
   - local: common/cicd-functions/sonarqube.yml
 
-variables:
-  ASA_PROJECT_DIR: "${CI_PROJECT_DIR}/common/docker-images"
-
 stages:
   - release-docker-images
   - trigger-child-pipelines
@@ -16,8 +13,8 @@ release-docker-images:
   image:
     name: gcr.io/kaniko-project/executor:v1.9.0-debug
   variables:
-    CONTEXT_DIR: $ASA_PROJECT_DIR
-    DOCKERFILE_PATH: "${ASA_PROJECT_DIR}/Dockerfile.quarkus-cli"
+    CONTEXT_DIR: ${CI_PROJECT_DIR}/common/docker-images
+    DOCKERFILE_PATH: "${CONTEXT_DIR}/Dockerfile.quarkus-cli"
     IMAGE_NAME: "${NEXUS_DOCKER_REPOSITORY_URL}/quarkus-cli"
     IMAGE_VERSION: "latest"
   before_script:
@@ -50,3 +47,7 @@ asa-back:
 
 sonarqube-check:
   extends: .sonarqube-check
+  only:
+    changes:
+      - asa-ng/**/*
+      - asa-back/**/*
