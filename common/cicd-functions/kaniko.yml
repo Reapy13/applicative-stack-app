@@ -13,7 +13,7 @@
   script:
     - /kaniko/executor
       --context="${CONTEXT_DIR}"
-      --dockerfile="${CONTEXT_DIR}/Dockerfile"
+      --dockerfile="${DOCKERFILE_PATH}"
       --destination="${IMAGE_NAME}:${IMAGE_VERSION}"
   rules:
     - if: '$CI_COMMIT_BRANCH != "master" && $CI_JOB_MANUAL != "true"'

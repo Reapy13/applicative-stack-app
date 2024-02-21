@@ -1,13 +1,30 @@
 include:
-  - local: cicd-functions/sonarqube.yml
+  - local: common/cicd-functions/kaniko.yml
+  - local: common/cicd-functions/sonarqube.yml
 
 variables:
   ASA_PROJECT_DIR: "${CI_PROJECT_DIR}"
 
 stages:
+  - release-docker-images
   - trigger-child-pipelines
   - analyse
 
+
+release-docker-images:
+  stage: release-docker-images
+  variables:
+    DOCKERFILE_PATH: "${ASA_PROJECT_DIR}/common/docker-images/Dockerfile.quarkus-cli"
+    IMAGE_NAME: "${NEXUS_DOCKER_REPOSITORY_URL}/quarkus-cli"
+    IMAGE_VERSION: "latest"
+  before_script:
+    - cd common/docker-images
+    - !reference [.kaniko-build-and-publish, before_script]
+  script:
+    - !reference [.kaniko-build-and-publish, script]
+  only:
+      changes:
+        - common/docker-images/**/*
 
 asa-ng:
   stage: trigger-child-pipelines

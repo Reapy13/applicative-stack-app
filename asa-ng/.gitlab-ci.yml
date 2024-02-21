@@ -1,7 +1,7 @@
 include:
-  - local: cicd-functions/common.yml
-  - local: cicd-functions/helm.yml
-  - local: cicd-functions/kaniko.yml
+  - local: common/cicd-functions/common.yml
+  - local: common/cicd-functions/helm.yml
+  - local: common/cicd-functions/kaniko.yml
 
 image: node:18-alpine
 before_script:
@@ -27,7 +27,7 @@ get-version:
       if [ ${CI_COMMIT_TAG} ]; then
         VERSION=${CI_COMMIT_TAG}
       else
-        VERSION="$(node -p require\(\'${ASA_PROJECT_DIR}/package.json\'\).version)-${CI_COMMIT_SHORT_SHA}"
+        VERSION="$(node -p require\(\'package.json\'\).version)-${CI_COMMIT_SHORT_SHA}"
       fi
     - echo "VERSION=${VERSION}" >> prepare.env
 
@@ -70,6 +70,8 @@ test:
 
 build-and-publish-docker-image:
   extends: .kaniko-build-and-publish
+  variables:
+    DOCKERFILE_PATH: ${CONTEXT_DIR}/Dockerfile
 
 publish-helm-chart:
   extends: .publish-helm-chart

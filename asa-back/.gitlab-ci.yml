@@ -1,7 +1,7 @@
 include:
-  - local: cicd-functions/common.yml
-  - local: cicd-functions/helm.yml
-  - local: cicd-functions/kaniko.yml
+  - local: common/cicd-functions/common.yml
+  - local: common/cicd-functions/helm.yml
+  - local: common/cicd-functions/kaniko.yml
 
 image: maven:3.9.6-eclipse-temurin-21
 before_script:
@@ -43,7 +43,7 @@ build:
   stage: package
   needs: [test]
   image: 
-    name: quay.io/quarkus/quarkus-micro-image:2.0
+    name: ${NEXUS_DOCKER_REPOSITORY_URL}/quarkus-cli:latest
   script:
     - quarkus build --native --no-tests -Dquarkus.native.container-build=true
   artifacts:
@@ -55,6 +55,8 @@ build:
 
 build-and-publish-docker-image:
   extends: .kaniko-build-and-publish
+  variables:
+    DOCKERFILE_PATH: ${CONTEXT_DIR}/Dockerfile
 
 publish-helm-chart:
   extends: .publish-helm-chart
