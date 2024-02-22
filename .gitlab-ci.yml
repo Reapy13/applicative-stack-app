@@ -19,7 +19,6 @@ release-docker-images:
     IMAGE_VERSION: "latest"
   before_script:
     - cd common/docker-images
-    - echo $CI_JOB_MANUAL
     - !reference [.kaniko-build-and-publish, before_script]
   script:
     - !reference [.kaniko-build-and-publish, script]
