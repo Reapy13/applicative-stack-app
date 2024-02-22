@@ -1,7 +1,7 @@
 # First image to install quarkus-cli
 FROM homebrew/ubuntu20.04:4.2.9 AS installer
 
-RUN brew install quarkusio/tap/quarkus@3.7.3
+RUN brew install quarkusio/tap/quarkus
 
 
 # Second image : final image
@@ -11,7 +11,7 @@ RUN adduser --no-create-home --disabled-password --disabled-login hfauchery
 
 COPY --from=installer /home/linuxbrew/.linuxbrew/Cellar /foreign-bins
 
-ENV PATH="$PATH:/foreign-bins/quarkus/3.7.3/bin"
+ENV PATH="$PATH:/foreign-bins/quarkus/$(cd /foreign-bins/quarkus && ls)/bin"
 USER hfauchery
 
 ENTRYPOINT ["tail", "-f", "/dev/null"]
