@@ -23,7 +23,7 @@ release-docker-images:
   script:
     - !reference [.kaniko-build-and-publish, script]
   rules:
-      - if: '$CI_JOB_MANUAL == "true"'
+      - if: $CI_JOB_MANUAL == "true"
         when: never
       - changes:
         - common/docker-images/**/*
