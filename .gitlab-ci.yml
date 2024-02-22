@@ -25,6 +25,8 @@ release-docker-images:
   only:
       changes:
         - common/docker-images/**/*
+  rules:
+    - if: '$CI_JOB_MANUAL != "true"'
 
 asa-ng:
   stage: trigger-child-pipelines
