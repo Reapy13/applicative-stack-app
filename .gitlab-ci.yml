@@ -23,9 +23,9 @@ release-docker-images:
   script:
     - !reference [.kaniko-build-and-publish, script]
   rules:
+      - if: '$CI_JOB_MANUAL != "true"'
       - changes:
         - common/docker-images/**/*
-      - if: '$CI_JOB_MANUAL != "true"'
 
 asa-ng:
   stage: trigger-child-pipelines
