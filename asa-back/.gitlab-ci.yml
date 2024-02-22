@@ -43,7 +43,7 @@ build:
   stage: package
   needs: [test]
   image: 
-    name: ${NEXUS_DOCKER_REPOSITORY_URL}/quarkus-cli:latest
+    name: ${NEXUS_DOCKER_REPOSITORY_URL}:${NEXUS_DOCKER_REPOSITORY_PORT}/quarkus-cli:latest
   script:
     - quarkus build --native --no-tests -Dquarkus.native.container-build=true
   artifacts:
