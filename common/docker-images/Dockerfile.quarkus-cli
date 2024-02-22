@@ -1,7 +1,7 @@
 # First image to install quarkus-cli
 FROM homebrew/ubuntu20.04:4.2.9 AS installer
 
-RUN brew install quarkusio/tap/quarkus
+RUN brew install quarkusio/tap/quarkus@3.7.3
 
 
 # Second image : final image
