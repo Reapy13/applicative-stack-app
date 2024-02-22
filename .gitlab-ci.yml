@@ -22,19 +22,18 @@ release-docker-images:
     - !reference [.kaniko-build-and-publish, before_script]
   script:
     - !reference [.kaniko-build-and-publish, script]
-  only:
-      changes:
-        - common/docker-images/**/*
   rules:
-    - if: '$CI_JOB_MANUAL != "true"'
+      - changes:
+        - common/docker-images/**/*
+      - if: '$CI_JOB_MANUAL != "true"'
 
 asa-ng:
   stage: trigger-child-pipelines
   trigger:
     include: asa-ng/.gitlab-ci.yml
     strategy: depend
-  only:
-    changes:
+  rules:
+    - changes:
       - asa-ng/**/*
 
 asa-back:
@@ -42,8 +41,8 @@ asa-back:
   trigger:
     include: asa-back/.gitlab-ci.yml
     strategy: depend
-  only:
-    changes:
+  rules:
+    - changes:
       - asa-back/**/*
 
 
