@@ -11,10 +11,9 @@ RUN adduser --no-create-home --disabled-password --disabled-login hfauchery
 
 COPY --from=installer /home/linuxbrew/.linuxbrew/Cellar /foreign-bins
 
-WORKDIR /foreign-bins/quarkus
-RUN quarkus_version="$(cd /foreign-bins/quarkus && ls)" && cd $quarkus_version
-RUN cd bin
-RUN PATH=$PATH:$(pwd)
+WORKDIR /
+#Thinks to change the path if a new version is available
+ENV PATH=$PATH:/foreign-bins/quarkus/3.8.1/bin
 USER hfauchery
 
 ENTRYPOINT ["tail", "-f", "/dev/null"]
