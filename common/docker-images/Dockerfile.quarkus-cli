@@ -11,6 +11,8 @@ RUN adduser --no-create-home --disabled-password --disabled-login hfauchery
 
 COPY --from=installer /home/linuxbrew/.linuxbrew/Cellar /foreign-bins
 
+RUN chmod 777 /home
+
 WORKDIR /
 #Thinks to change the path if a new version is available
 ENV PATH=$PATH:/foreign-bins/quarkus/3.8.1/bin
