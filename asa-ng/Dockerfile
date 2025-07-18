@@ -1,8 +1,15 @@
-FROM nginx:2.15.1-alpine
+FROM nginx:1.25-alpine
 
-ARG WORKDIR = app/
+RUN rm -rf /usr/share/nginx/html/*
+RUN rm /etc/nginx/nginx.conf
+RUN rm /etc/nginx/conf.d/default.conf
 
-RUN groupadd -r owners && useradd -g owners hfauchery
-USER hfauchery
+COPY nginx/nginx.conf /etc/nginx/nginx.conf
+COPY nginx/default.conf /etc/nginx/conf.d/default.conf
 
-COPY /dist/asa-ng /usr/share/nginx/html
+COPY --chown=nginx:nginx ./dist/asa-ng /usr/share/nginx/html
+
+USER nginx
+
+ENTRYPOINT ["nginx"]
+CMD ["-g", "daemon off;"]

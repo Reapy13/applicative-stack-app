@@ -1,13 +1,42 @@
+include:
+  - local: cicd-functions/kaniko.yml
+
 image: node:18-alpine
 before_script:
     - cd asa-ng
 
+variables:
+  HAS_TO_DEPLOY: "false"
+  ASA_PROJECT_DIR: "${CI_PROJECT_DIR}/asa-ng"
+
 stages:
   - prepare
   - build
+  - analyse
   - test
+  - release
+  - deploy
 
-install_packages:
+get-version:
+  stage: prepare
+  variables:
+    VERSION: latest
+  script:
+    - |
+      if [ ${CI_COMMIT_TAG} ]; then
+        VERSION=${CI_COMMIT_TAG}
+      else
+        VERSION="$(node -p require\(\'${ASA_PROJECT_DIR}/package.json\'\).version)-${CI_COMMIT_SHORT_SHA}"
+      fi
+    - echo "VERSION=${VERSION}" >> prepare.env
+  artifacts:
+    reports:
+      dotenv: ${ASA_PROJECT_DIR}/prepare.env
+  rules:
+    - if: '$CI_COMMIT_BRANCH != "master"'
+      when: always
+
+install-packages:
   stage: prepare
   script:
     - npm ci
@@ -17,15 +46,104 @@ install_packages:
 
 build:
   stage: build
-  needs: [install_packages]
   script:
     - npm run build
   artifacts:
     paths:
       - asa-ng/dist/*
+  rules:
+    - when: on_success
+
+
+sonarqube-check:
+  stage: analyse
+  needs: [install-packages]
+  image: 
+    name: sonarsource/sonar-scanner-cli:latest
+    entrypoint: [""]
+  variables:
+    SONAR_USER_HOME: "${ASA_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
+    GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
+  cache:
+    key: "${CI_JOB_NAME}"
+    paths:
+      - .sonar/cache
+  script:
+    - sonar-scanner
+  allow_failure: true
+  rules:
+    - when: on_success
+
+npm-audit:
+  stage: analyse
+  needs: [install-packages]
+  script:
+    - npm audit
+  allow_failure: true
+  rules:
+    - when: on_success
+
 
 test:
   stage: test
-  needs: [install_packages]
+  needs: [install-packages]
   script:
     - npm run test
+  rules:
+    - when: on_success
+
+
+build-and-publish-docker-image:
+  stage: release
+  image:
+    name: gcr.io/kaniko-project/executor:v1.9.0-debug
+    entrypoint: ['']
+  variables:
+    CONTEXT_DIR: "${ASA_PROJECT_DIR}"
+    IMAGE_NAME: "${NEXUS_DOCKER_REPOSITORY_URL}/asa-ng"
+    IMAGE_VERSION: ${VERSION}
+  before_script:
+    # Adds authentication to docker repository into kaniko config
+    - echo "{\"auths\":{\"${NEXUS_DOCKER_REPOSITORY_URL}:${NEXUS_HTTPS_PORT}\":{\"username\":\"${DOCKER_CICD_USER}\",\"password\":\"${DOCKER_CICD_PASSWORD}\"}}}" > /kaniko/.docker/config.json
+  script:
+    - !reference [.kaniko-build-and-publish, script]
+  rules:
+    - if: '$CI_COMMIT_BRANCH != "master" && $CI_JOB_MANUAL != "true"'
+      when: on_success
+
+# TODO : Thinking about rename steps and needs
+publish-helm-chart:
+  stage: release
+  needs: [get-version, build-and-publish-docker-image]
+  image:
+    name: alpine/helm:3.13.3
+  variables:
+    WORKDIR: "${ASA_PROJECT_DIR}"
+    CHART_PATH: ${WORKDIR}/asa-ng-${VERSION}.tgz
+  before_script:
+    - cd $WORKDIR
+    - helm repo add asa-registry $NEXUS_HELM_REPOSITORY_URL --username $HELM_CICD_USER --password $HELM_CICD_PASSWORD
+  script:
+    - helm package ${WORKDIR}/helm --version $VERSION --app-version $VERSION
+    - curl -u ${HELM_CICD_USER}:${HELM_CICD_PASSWORD} $NEXUS_HELM_REPOSITORY_URL --upload-file $CHART_PATH -v
+  rules:
+    - if: '$CI_COMMIT_BRANCH != "master" && $CI_JOB_MANUAL != "true"'
+      when: on_success
+  artifacts:
+    paths:
+      - $CHART_PATH
+
+
+deploy:
+  stage: deploy
+  image:
+    name: alpine/helm:3.13.3
+  variables:
+    WORKDIR: "${ASA_PROJECT_DIR}"
+    CHART_PATH: ${WORKDIR}/asa-ng-${VERSION}.tgz
+  script:
+    - helm install asa-ng $CHART_PATH --kube-apiserver $KUBE_URL --kube-token sha256~YlrHvKIu6RNethniFTL8JrXtfdBFib__-unUhJbUHQM --namespace asa --set version=${VERSION}
+  rules:
+    - if: '$CI_COMMIT_BRANCH != "master" && $HAS_TO_DEPLOY == "true"'
+      when: on_success
+  

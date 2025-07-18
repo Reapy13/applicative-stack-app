@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: asa-ng
+  name: asa-ng
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: asa-ng
+  template:
+    metadata:
+      labels:
+        app: asa-ng
+    spec:
+      containers:
+        - image: {{ .Values.registry_url }}/asa-ng:{{ .Values.version }}
+          name: asa-ng
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              cpu: 50m
+              memory: 16Mi
+            limits:
+              cpu: 100m
+              memory: 64Mi
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+      imagePullSecrets:
+        - name: docker-registry-credentials
