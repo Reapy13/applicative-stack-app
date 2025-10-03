@@ -1,0 +1,113 @@
+databaseChangeLog:
+  - changeSet:
+      id: 11
+      author: hfauchery
+      changes:
+        - insert:
+            tableName: team
+            columns:
+              - column:
+                  name: name
+                  value: The Witnesses
+              - column:
+                  name: coefficient
+                  value: 2
+        - insert:
+            tableName: team
+            columns:
+              - column:
+                  name: name
+                  value: The Aurora's Children
+        - insert:
+            tableName: team
+            columns:
+              - column:
+                  name: name
+                  value: The Incredibles
+              - column:
+                  name: coefficient
+                  value: 15
+        - insert:
+            tableName: worker
+            columns:
+              - column:
+                  name: name
+                  value: 0-Xb4O
+              - column:
+                  name: popularity
+                  value: 1000
+              - column:
+                  name: team_id
+                  value: 2
+        - insert:
+            tableName: worker
+            columns:
+              - column:
+                  name: name
+                  value: Adèle
+              - column:
+                  name: popularity
+                  value: 10
+              - column:
+                  name: team_id
+                  value: 1
+        - insert:
+            tableName: worker
+            columns:
+              - column:
+                  name: name
+                  value: Basile
+              - column:
+                  name: popularity
+                  value: 20
+              - column:
+                  name: team_id
+                  value: 3
+        - insert:
+            tableName: worker
+            columns:
+              - column:
+                  name: name
+                  value: Clément
+              - column:
+                  name: popularity
+                  value: 30
+              - column:
+                  name: team_id
+                  value: 3
+        - insert:
+            tableName: worker
+            columns:
+              - column:
+                  name: name
+                  value: Dominique
+              - column:
+                  name: popularity
+                  value: 150
+              - column:
+                  name: team_id
+                  value: 1
+        - insert:
+            tableName: task
+            columns:
+              - column:
+                  name: title
+                  value: "Se laver"
+              - column:
+                  name: completed
+                  value: true
+              - column:
+                  name: worker_id
+                  value: 1
+        - insert:
+            tableName: task
+            columns:
+              - column:
+                  name: title
+                  value: "Aller au travail"
+              - column:
+                  name: completed
+                  value: false
+              - column:
+                  name: worker_id
+                  value: 2
