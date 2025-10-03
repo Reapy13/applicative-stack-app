@@ -1,0 +1,5 @@
+databaseChangeLog:
+  - include:
+      file: db/liquibase/changelog/master.yaml
+  - include:
+      file: db/liquibase/changelog/it/data/data.yaml

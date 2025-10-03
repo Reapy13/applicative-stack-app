@@ -1,0 +1,94 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: hfauchery
+      changes:
+        - createTable:
+            tableName: team
+            columns:
+              - column:
+                  name: id
+                  type: LONG
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: team_pkey
+              - column:
+                  name: name
+                  type: TEXT
+              - column:
+                  name: coefficient
+                  type: BIGINT
+                  defaultValue: 0
+        - addAutoIncrement:
+            columnDataType: LONG
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 1
+            tableName: team
+        - createTable:
+            tableName: worker
+            columns:
+              - column:
+                  name: id
+                  type: LONG
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: worker_pkey
+              - column:
+                  name: name
+                  type: TEXT
+              - column:
+                  name: popularity
+                  type: BIGINT
+                  defaultValue: 1
+              - column:
+                  name: team_id
+                  type: LONG
+        - addAutoIncrement:
+            columnDataType: LONG
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 1
+            tableName: worker
+        - addForeignKeyConstraint:
+            baseColumnNames: team_id
+            baseTableName: worker
+            constraintName: fk_team_worker
+            referencedColumnNames: id
+            referencedTableName: team
+        - createTable:
+            tableName: task
+            columns:
+              - column:
+                  name: id
+                  type: LONG
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: task_pkey
+              - column:
+                  name: title
+                  type: TEXT
+              - column:
+                  name: completed
+                  type: BOOLEAN
+              - column:
+                  name: worker_id
+                  type: LONG
+        - addAutoIncrement:
+            columnDataType: LONG
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 1
+            tableName: task
+        - addForeignKeyConstraint:
+            baseColumnNames: worker_id
+            baseTableName: task
+            constraintName: fk_worker_task
+            referencedColumnNames: id
+            referencedTableName: worker
